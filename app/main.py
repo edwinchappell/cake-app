@@ -28,7 +28,8 @@ table_name = 'cake'
 table = client.Table(table_name)
 logger.info(f"API spec availble at 'http://localhost:8001/docs'")
 
-CAKE_ERROR_DETAIL = {409: "Conflict - cannot process cake request with provided ID",
+CAKE_ERROR_DETAIL = {204: "Deleted cake with ID",
+                     409: "Conflict - cannot process cake request with provided ID",
                      500: "An unknown error occurred"}
 
 
@@ -75,14 +76,14 @@ async def list():
     return response.get("Items")
 
 
-@app.delete("/delete/{id}", responses={204: {"message": "Cake was deleted"}, 500: {"message": "Something went wrong"}})
+@app.delete("/delete/{id}", responses={204: {"message": f"{CAKE_ERROR_DETAIL.get(204)} <id>"}, 500: {"message": CAKE_ERROR_DETAIL.get(500)}})
 async def delete(id: int):
     table.delete_item(
         Key={
             'id': id,
         }
     )
-    return {"message": f"Cake deleted. {id}"}
+    return {"message": f"{CAKE_ERROR_DETAIL.get(204)} {id}"}
 
 
 def get_by_id(cake_id: int):

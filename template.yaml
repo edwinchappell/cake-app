@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Globals:
+  Function:
+    Timeout: 10
+Parameters:
+  Table:
+    Type: String
+    Default: cake
+  Region:
+    Type: String
+    Default: eu-west-2
+  AWSEnv:
+    Type: String
+    Default: AWS
+Resources:
+  CakeLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Environment:
+        Variables:
+          REGION: eu-west-2
+          STAGE: dev
+      Events:
+        ApiEvent:
+          Properties:
+            RestApiId:
+              Ref: CakeGateway
+            Path: /{proxy+}
+            Method: ANY
+          Type: Api
+      FunctionName: cake-lambda
+      CodeUri: ./app
+      Handler: main.handler
+      Runtime: python3.9
+      Timeout: 30
+      MemorySize: 128
+      Description: CakeAPI-Lambda
+      Policies: AmazonDynamoDBFullAccess
+  DynamoCakeTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: cake
+      PrimaryKey:
+        Name: id
+        Type: Number
+  CakeGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+      OpenApiVersion: '3.0.0'
+Outputs:
+  CakeAPIEndpoint:
+    Description: "CAKE API dev stage spec"
+    Value: !Sub "https://${CakeGateway}.execute-api.${AWS::Region}.amazonaws.com/dev/docs"
