@@ -1,11 +1,11 @@
-BUCKET_NAME=<bucket_name> # For SAM deployment
+BUCKET_NAME=etcbucket20211006 # For SAM deployment
 STACK_NAME=cake-stack # For SAM deployment
 
 start_dynamodb_local:
 	pip3 install --no-cache-dir --upgrade -r ./app/requirements.txt
 	docker stop dynamodb || true && docker rm dynamodb || true
 	docker run -d -i --name dynamodb -p 8000:8000 amazon/dynamodb-local
-	python3 ./scripts/dynamodb_local.py
+	python3 dynamodb_local.py
 
 start_app_local:
 	cd ./app; uvicorn main:app --reload --port 8001
