@@ -23,10 +23,11 @@ if os.environ.get("REGION", False):
 else:
     logger.info("Connect to DB using endpoint")
     client = boto3.resource('dynamodb', endpoint_url='http://localhost:8000')
+    logger.info(f"API spec available at 'http://localhost:8001/docs'")
 
 table_name = 'cake'
 table = client.Table(table_name)
-logger.info(f"API spec availble at 'http://localhost:8001/docs'")
+
 
 CAKE_ERROR_DETAIL = {204: "Deleted cake with ID",
                      409: "Conflict - cannot process cake request with provided ID",
