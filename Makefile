@@ -1,4 +1,4 @@
-BUCKET_NAME=etcbucket20211006 # For SAM deployment
+BUCKET_NAME=<bucket name> # For SAM deployment
 STACK_NAME=cake-stack # For SAM deployment
 
 start_dynamodb_local:
