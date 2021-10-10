@@ -31,7 +31,7 @@ Resources:
           Type: Api
       FunctionName: cake-lambda
       CodeUri: ./app
-      Handler: main.handler
+      Handler: app.handler
       Runtime: python3.9
       Timeout: 30
       MemorySize: 128

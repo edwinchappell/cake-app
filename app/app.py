@@ -43,6 +43,11 @@ class Cake(BaseModel):
     yumFactor: int = Field(ge=1, le=5)
 
 
+@app.get("/")
+def health():
+    return "OK"
+
+
 @app.post("/create", status_code=201, response_model=Cake, responses={409: {"message": CAKE_ERROR_DETAIL.get(409),
                                                                             500: {"message": CAKE_ERROR_DETAIL.get(
                                                                                 500)}}})

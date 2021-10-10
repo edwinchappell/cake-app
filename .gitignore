@@ -4,3 +4,4 @@ Pipfile.lock
 .aws-sam/
 venv/
 .idea/
+app/requirements.txt
