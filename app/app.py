@@ -43,6 +43,10 @@ class Cake(BaseModel):
     yumFactor: int = Field(ge=1, le=5)
 
 
+class Message(BaseModel):
+    message: str
+
+
 @app.get("/")
 def health():
     return "OK"
@@ -55,17 +59,21 @@ async def create(cake_req: Cake):
     id_query_result = get_by_id(cake_req.id)
     if id_query_result is not None and id_query_result.get("Count") > 0:
         raise HTTPException(status_code=409, detail=CAKE_ERROR_DETAIL.get(409))
+    try:
+        table.put_item(
+            Item={
+                'id': cake_req.id,
+                'name': cake_req.name,
+                'comment': cake_req.comment,
+                'imageUrl': cake_req.imageUrl,
+                'value': cake_req.value,
+                'yumFactor': cake_req.yumFactor,
+            }
+        )
+    except Exception as e:
+        logger.error("Error writing to table", e)
+        raise HTTPException(status_code=500, detail=CAKE_ERROR_DETAIL.get(500))
 
-    table.put_item(
-        Item={
-            'id': cake_req.id,
-            'name': cake_req.name,
-            'comment': cake_req.comment,
-            'imageUrl': cake_req.imageUrl,
-            'value': cake_req.value,
-            'yumFactor': cake_req.yumFactor,
-        }
-    )
     return cake_req
 
 
@@ -78,18 +86,23 @@ async def list():
     except Exception as e:
         logger.error("Error scanning table", e)
         return response
-    logger.info(f"Got table scan result {response}")
+    logger.info(f"Table scan result {response}")
     return response.get("Items")
 
 
-@app.delete("/delete/{id}", responses={204: {"message": f"{CAKE_ERROR_DETAIL.get(204)} <id>"}, 500: {"message": CAKE_ERROR_DETAIL.get(500)}})
+@app.delete("/delete/{id}", status_code=204, responses={ 500: {"message": CAKE_ERROR_DETAIL.get(500)}})
 async def delete(id: int):
-    table.delete_item(
-        Key={
-            'id': id,
-        }
-    )
-    return {"message": f"{CAKE_ERROR_DETAIL.get(204)} {id}"}
+    try:
+        table.delete_item(
+            Key={
+                'id': id,
+            }
+        )
+    except Exception as e:
+        logger.error("Error deleting from table", e)
+        raise HTTPException(status_code=500, detail=CAKE_ERROR_DETAIL.get(500))
+
+    return
 
 
 def get_by_id(cake_id: int):

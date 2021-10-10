@@ -47,6 +47,10 @@ cd cake-app
 Run `make start_local` to start the application locally for development. This will spin up a local dynamodb container 
 (see https://hub.docker.com/r/amazon/dynamodb-local)
 
+### Testing the API locally
+
+Run `make test_local` to unit test the application locally
+
 ### Running the API on AWS using SAM CLI
 
 (Note that the Makefile BUCKET_NAME variable must be assigned to a valid bucket name - see prerequisites)
