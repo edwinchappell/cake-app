@@ -5,7 +5,7 @@ STACK_NAME=cake-stack# For SAM deployment
 
 start_local: _install_dependencies _start_dynamodb_local _start_app_local
 
-test_local: _start_dynamodb_local _run_tests
+test_local: _install_dependencies _start_dynamodb_local _run_tests
 
 start_aws_sam:
 	cp requirements.txt ./app/
@@ -34,7 +34,7 @@ _docker_build_tag_push:
 	docker push ${ECR_URI}/${APP_NAME}:latest
 
 _create_ecs_infrastructure:
-	cd ./terraform; terraform apply -auto-approve
+	cd ./terraform; terraform init; terraform apply -auto-approve
 
 _destroy_ecs_infrastructure:
 	cd ./terraform; terraform destroy -auto-approve
