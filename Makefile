@@ -25,7 +25,7 @@ stop_aws_ecs: _destroy_ecs_infrastructure
 _start_dynamodb_local:
 	docker stop dynamodb || true && docker rm dynamodb || true
 	docker run -d -i --name dynamodb -p 8000:8000 amazon/dynamodb-local
-	python dynamodb_local.py
+	python3 dynamodb_local.py
 
 _docker_build_tag_push:
 	cd ./app; docker build --tag ${APP_NAME} .
@@ -43,10 +43,10 @@ _start_app_local:
 	cd ./app; uvicorn app:app --reload --port 8001
 
 _install_dependencies:
-	pip install -r requirements.txt
+	pip3 install -r requirements.txt
 
 _run_tests:
-	pip install pytest moto requests
+	pip3 install pytest moto requests
 	pytest
 	docker stop dynamodb || true && docker rm dynamodb || true
 
