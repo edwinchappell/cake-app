@@ -17,11 +17,15 @@ stage = os.environ.get('STAGE', None)
 root_path = f"/{stage}" if stage else "/"
 app = FastAPI(title='CAKE API', root_path=root_path)
 
-if os.environ.get("REGION", False):
+print(os.environ)
+if os.environ.get("AWS_SAM_LOCAL"):
+    logger.info("Running in SAM local")
+    client = boto3.resource('dynamodb', endpoint_url='http://dynamodb:8000')
+elif os.environ.get("REGION"):
     logger.info("Connect to DB using region")
     client = boto3.resource('dynamodb', region_name="eu-west-2")
 else:
-    logger.info("Connect to DB using endpoint")
+    logger.info("Running locally")
     client = boto3.resource('dynamodb', endpoint_url='http://localhost:8000')
     logger.info(f"API spec available at 'http://localhost:8001/docs'")
 
